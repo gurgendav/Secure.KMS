@@ -1,0 +1,698 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "KMS",
+    "version": "1.0",
+    "description": "Key management service acting as encryption as a service for small payloads like module related aes (symmetric) keys"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/auth/{customer_id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "ba068fa8-f9b2-4ae7-b04a-116cf94ca62c"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "description": "Tenant identifier",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "post-auth-customer_id",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "description": "first user identifier"
+                  },
+                  "user_password": {
+                    "type": "string",
+                    "description": "first user password"
+                  },
+                  "customer_name": {
+                    "type": "string",
+                    "description": "additional account info - name"
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "user_password"
+                ]
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "user_id": "bd21162c-83b1-49c2-8757-8b05182beb8c",
+                    "user_password": "123456",
+                    "customer_name": "Bosch"
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        },
+        "description": "Will create keyset, master key and lock it with first (root) users password.\nOperation creates a customer(tenant) and onboards first user."
+      },
+      "put": {
+        "summary": "",
+        "operationId": "put-auth-customer_id",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "customer_name": "Siemens"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "",
+        "operationId": "post-auth-login",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "session_token": {
+                      "type": "string",
+                      "description": "Crypto session identifier"
+                    },
+                    "authentication_key": {
+                      "type": "string",
+                      "description": "Temporary password for user session"
+                    }
+                  },
+                  "required": [
+                    "session_token",
+                    "authentication_key"
+                  ]
+                },
+                "examples": {
+                  "example": {
+                    "value": {
+                      "session_token": "592d60b4-f70d-489b-9592-325fc2ed0a72",
+                      "authentication_key": "adb5a6d0-83a8-41c2-a5cc-f1b5a03d790c"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Create crypto session for the user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "description": "Tenant identifier in uuid form"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "description": "User identified. Should be in uuid format"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password to unlock user master key"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "user_id",
+                  "password"
+                ]
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "customer_id": "ba068fa8-f9b2-4ae7-b04a-116cf94ca62c",
+                    "user_id": "bd21162c-83b1-49c2-8757-8b05182beb8c",
+                    "password": "123456",
+                    "session_token": "592d60b4-f70d-489b-9592-325fc2ed0a72",
+                    "authentication_key": "adb5a6d0-83a8-41c2-a5cc-f1b5a03d790c"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/{customer_id}/userpass/users/{user_id}/password": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "ba068fa8-f9b2-4ae7-b04a-116cf94ca62c"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "bd21162c-83b1-49c2-8757-8b05182beb8c"
+          },
+          "name": "user_id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "post-auth-customer_id-userpass-users-user_id-password",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "old_password": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "old_password",
+                  "new_password"
+                ]
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "old_password": "123456",
+                    "new_password": "654321"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": ""
+      }
+    },
+    "/auth/{customer_id}/userpass/users/{user_id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "required": true,
+          "description": "Tenant identifier"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "description": "User identifier"
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "post-auth-customer_id-userpass-users-user_id",
+        "responses": {},
+        "description": "New user creation. Will upsert customer. Will also create a master key and keyset if it does not exist.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "password"
+                ]
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "password": "56576576"
+                  }
+                }
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "x-crypto-token",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/encrypt/{customer_id}/aes": {
+      "post": {
+        "summary": "",
+        "operationId": "post-encrypt",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ciphertext": {
+                      "type": "string",
+                      "description": "Encrypted content in format <key_type>:v<version>:base64"
+                    }
+                  },
+                  "required": [
+                    "ciphertext"
+                  ]
+                },
+                "examples": {
+                  "symmetric": {
+                    "value": {
+                      "ciphertext": "aes:v1:QrUnth2bYQ6Y2W9mK33JTVYsYjORLzEjEa+Wkq8fkxGwMqnHb9iLY7v9XVGrjrqdMBxRLAniSUYlLGOG4NUMM0Kz6u9T46Zw6pRIDSRmkReuc/VS++eSsKhLacpO4AE7xSQblBtxaXCpj+3fksc/YZaR1915ZJLcJ3FuN1vfGxtFfZwsW5avZ3TDUYf9MJ9JQvwotpv7kQ2YhQDk0+dbLVB3Q8K9RpxgGVAP+Kj9TiqRBxcRhL3o+Ubu9KapeQufFAroTeCALe+EsjGvsfWFVmsAdj2Ky7FLSv3Zd58e1zmalgHvHqTSnU1iIOW3VYV+ZDg1yQh7f9HArjum8taGqQFPh4KmNijfy4pje2mjvEC3UVvXklcVgGJ4S8/YMK1O5j0uv0h="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Encrypt content.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "x-crypto-token",
+            "description": "Authentication for KMS",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "plaintext": {
+                    "type": "string",
+                    "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+                    "description": "Base64 encoded plain text"
+                  }
+                },
+                "required": [
+                  "plaintext"
+                ]
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "plaintext": "zuz2OqDNSC9tRRSq2q+TjszWtDYxBr/DU5Je9t914dCIIbT/jH86BvRwK0y9qKDeMCug9oJyoINa1yoZANtXQS9FkYVJQ0dMzvQsH5IbLwd5hTBuW8T+rC10VvHTS6B5GRf+CMSgde4mPu68vhGqkaoNNl9JXKQ9rq9zXP=="
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "required": true,
+          "description": "Tenant identifier"
+        }
+      ]
+    },
+    "/encrypt/{customer_id}/rsa": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "required": true,
+          "description": "Tenant identifier"
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "post-encrypt-customer_id-rsa",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ciphertext": {
+                      "type": "string",
+                      "pattern": "^(?:[a-z]+):(?:[v]+[0-9]+):(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+                    }
+                  },
+                  "required": [
+                    "ciphertext"
+                  ]
+                },
+                "examples": {
+                  "example": {
+                    "value": {
+                      "ciphertext": "rsa:v2:QrUnth2bYQ6Y2W9mK33JTVYsYjORLzEjEa+Wkq8fkxGwMqnHb9iLY7v9XVGrjrqdMBxRLAniSUYlLGOG4NUMM0Kz6u9T46Zw6pRIDSRmkReuc/VS++eSsKhLacpO4AE7xSQblBtxaXCpj+3fksc/YZaR1915ZJLcJ3FuN1vfGxtFfZwsW5avZ3TDUYf9MJ9JQvwotpv7kQ2YhQDk0+dbLVB3Q8K9RpxgGVAP+Kj9TiqRBxcRhL3o+Ubu9KapeQufFAroTeCALe+EsjGvsfWFVmsAdj2Ky7FLSv3Zd58e1zmalgHvHqTSnU1iIOW3VYV+ZDg1yQh7f9HArjum8taGqQFPh4KmNijfy4pje2mjvEC3UVvXklcVgGJ4S8/YMK1O5j0uv0h="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "plaintext": {
+                    "type": "string",
+                    "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+                  }
+                },
+                "required": [
+                  "plaintext"
+                ]
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "plaintext": "zuz2OqDNSC9tRRSq2q+TjszWtDYxBr/DU5Je9t914dCIIbT/jH86BvRwK0y9qKDeMCug9oJyoINa1yoZANtXQS9FkYVJQ0dMzvQsH5IbLwd5hTBuW8T+rC10VvHTS6B5GRf+CMSgde4mPu68vhGqkaoNNl9JXKQ9rq9zXP=="
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Asymmetrically encrypt the content. It's a public endpoint. Content size is limited to keys size"
+      }
+    },
+    "/decrypt/{customer_id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "required": true,
+          "description": "Tenant identifer"
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "post-decrypt-customer_id",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "plaintext": {
+                      "type": "string",
+                      "description": "Base64 encoded result",
+                      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+                    }
+                  },
+                  "required": [
+                    "plaintext"
+                  ]
+                },
+                "examples": {
+                  "example": {
+                    "value": {
+                      "plaintext": "zuz2OqDNSC9tRRSq2q+TjszWtDYxBr/DU5Je9t914dCIIbT/jH86BvRwK0y9qKDeMCug9oJyoINa1yoZANtXQS9FkYVJQ0dMzvQsH5IbLwd5hTBuW8T+rC10VvHTS6B5GRf+CMSgde4mPu68vhGqkaoNNl9JXKQ9rq9zXP=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Decrypt content",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "x-crypto-token",
+            "required": true,
+            "description": "Crypto session identifier"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ciphertext": {
+                    "type": "string",
+                    "pattern": "^(?:[a-z]+):(?:[v]+[0-9]+):(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+                    "description": "Cipher format in <key_type>:v<version>:base64"
+                  }
+                },
+                "required": [
+                  "ciphertext"
+                ]
+              },
+              "examples": {
+                "symmetric": {
+                  "value": {
+                    "ciphertext": "aes:v2:QrUnth2bYQ6Y2W9mK33JTVYsYjORLzEjEa+Wkq8fkxGwMqnHb9iLY7v9XVGrjrqdMBxRLAniSUYlLGOG4NUMM0Kz6u9T46Zw6pRIDSRmkReuc/VS++eSsKhLacpO4AE7xSQblBtxaXCpj+3fksc/YZaR1915ZJLcJ3FuN1vfGxtFfZwsW5avZ3TDUYf9MJ9JQvwotpv7kQ2YhQDk0+dbLVB3Q8K9RpxgGVAP+Kj9TiqRBxcRhL3o+Ubu9KapeQufFAroTeCALe+EsjGvsfWFVmsAdj2Ky7FLSv3Zd58e1zmalgHvHqTSnU1iIOW3VYV+ZDg1yQh7f9HArjum8taGqQFPh4KmNijfy4pje2mjvEC3UVvXklcVgGJ4S8/YMK1O5j0uv0h="
+                  }
+                },
+                "asymmetric": {
+                  "value": {
+                    "ciphertext": "rsa:v2:QrUnth2bYQ6Y2W9mK33JTVYsYjORLzEjEa+Wkq8fkxGwMqnHb9iLY7v9XVGrjrqdMBxRLAniSUYlLGOG4NUMM0Kz6u9T46Zw6pRIDSRmkReuc/VS++eSsKhLacpO4AE7xSQblBtxaXCpj+3fksc/YZaR1915ZJLcJ3FuN1vfGxtFfZwsW5avZ3TDUYf9MJ9JQvwotpv7kQ2YhQDk0+dbLVB3Q8K9RpxgGVAP+Kj9TiqRBxcRhL3o+Ubu9KapeQufFAroTeCALe+EsjGvsfWFVmsAdj2Ky7FLSv3Zd58e1zmalgHvHqTSnU1iIOW3VYV+ZDg1yQh7f9HArjum8taGqQFPh4KmNijfy4pje2mjvEC3UVvXklcVgGJ4S8/YMK1O5j0uv0h="
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/keys/{customer_id}/rotate": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "required": true,
+          "description": "Tenant identifier"
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "post-keys-customer_id-rotate",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "x-crypto-token",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key_size": {
+                    "type": "integer",
+                    "default": 2048,
+                    "description": "RSA key size",
+                    "minimum": 2048,
+                    "enum": [
+                      2048,
+                      3072,
+                      4096
+                    ],
+                    "maximum": 4096
+                  }
+                }
+              },
+              "examples": {
+                "aes256 & rsa-2048": {
+                  "value": {
+                    "key_size": 2048
+                  }
+                }
+              }
+            }
+          },
+          "description": "Rotate customer keyset. Keyset includes aes256 and rsa key with default size 2048 bit.\nPlease note, master key is not rotated and implementation is pending"
+        }
+      }
+    },
+    "/keys/{customer_id}/rewrap": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "customer_id",
+          "in": "path",
+          "required": true,
+          "description": "Tenant identifier"
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "post-keys-customer_id",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ciphertext": {
+                      "type": "string",
+                      "pattern": "^(?:[a-z]+):(?:[v]+[0-9]+):(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Rewrap the encrypted content with latest symmetric or assymetric keys. Command useful when customers keys were rotated",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ciphertext": {
+                    "type": "string",
+                    "pattern": "^(?:[a-z]+):(?:[v]+[0-9]+):(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+                  },
+                  "key_type": {
+                    "type": "string",
+                    "enum": [
+                      "rsa",
+                      "aes"
+                    ],
+                    "description": "Rewrap the ciphertext with alternative key type. Otherwise will rewrap with key_type defined in the cipher"
+                  }
+                },
+                "required": [
+                  "ciphertext"
+                ]
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "ciphertext": "string"
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}

@@ -1,0 +1,553 @@
+{
+	"info": {
+		"_postman_id": "f180dc4a-518d-4bbb-9268-d2ad0fd5b36e",
+		"name": "KMS_1_0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "CreateCustomerKeyset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": \"{{user_uuid}}\",\r\n    \"user_password\": \"Eqs@1234\",\r\n    \"customer_name\": \"EQS-Group\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/{{customer_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"{{customer_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customer_name\": \"Eqs-Update\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/{{company_uuid}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"{{company_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateFirstUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"Eqs@1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/{{company_uuid}}/userpass/users/{{user_uuid}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"{{company_uuid}}",
+								"userpass",
+								"users",
+								"{{user_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.collectionVariables.set(\"cryptoToken\", pm.response.text());\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":  \"{{user_uuid}}\",\r\n    \"customer_id\": \"{{customer_id}}\",\r\n    \"password\": \"Eqs@1234\",\r\n    \"session_token\": \"\",\r\n    \"authentication_key\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"old_password\": \"Eqs@1234\",\r\n  \"new_password\": \"Eqs@12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/{{customer_id}}/userpass/users/{{user_uuid}}/password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"{{customer_id}}",
+								"userpass",
+								"users",
+								"{{user_uuid}}",
+								"password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Encrypt/Decrypt",
+			"item": [
+				{
+					"name": "EncryptEnvelope-RSA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.collectionVariables.set(\"ciphertext\", pm.response.json().ciphertext);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-crypto-token",
+								"value": "{{cryptoToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"plaintext\": \"This is plaintext envelope\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/encrypt/{{customer_id}}/envelope",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"encrypt",
+								"{{customer_id}}",
+								"envelope"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Encrypt-RSA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.collectionVariables.set(\"ciphertext\", pm.response.json().ciphertext);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-crypto-token",
+								"value": "{{cryptoToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"plaintext\": \"This is plaintext RSA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/encrypt/{{customer_id}}/rsa",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"encrypt",
+								"{{customer_id}}",
+								"rsa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Encrypt-AES",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.collectionVariables.set(\"ciphertext\", pm.response.json().ciphertext);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-crypto-token",
+								"value": "{{cryptoToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"plaintext\": \"This is plaintext AES.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/encrypt/{{customer_id}}/aes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"encrypt",
+								"{{customer_id}}",
+								"aes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decrypt",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-crypto-token",
+								"value": "{{cryptoToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ciphertext\": \"{{ciphertext}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/decrypt/{{customer_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"decrypt",
+								"{{customer_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Keys",
+			"item": [
+				{
+					"name": "Rotate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.collectionVariables.set(\"ciphertext\", pm.response.json().ciphertext);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-crypto-token",
+								"value": "{{cryptoToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"key_size\": 2048\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/keys/{{customer_id}}/rotate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"keys",
+								"{{customer_id}}",
+								"rotate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rewrap",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.collectionVariables.set(\"ciphertext\", pm.response.json().ciphertext);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-crypto-token",
+								"value": "{{cryptoToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ciphertext\": \"{{ciphertext}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/keys/{{customer_id}}/rewrap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"keys",
+								"{{customer_id}}",
+								"rewrap"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7138/api",
+			"type": "string"
+		},
+		{
+			"key": "customer_id",
+			"value": "f37b3dfc-7626-4a71-b895-2f3825f8d9d9",
+			"type": "string"
+		},
+		{
+			"key": "user_uuid",
+			"value": "184913f5-c650-4d3d-a386-379dc20ae9a3",
+			"type": "string"
+		},
+		{
+			"key": "cryptoToken",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "cryptoToken",
+			"value": ""
+		},
+		{
+			"key": "ciphertext",
+			"value": ""
+		}
+	]
+}
